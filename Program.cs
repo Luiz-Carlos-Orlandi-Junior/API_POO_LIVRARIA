@@ -1,56 +1,38 @@
-using Microsoft.OpenApi.Models;
+using System;
+using System.Linq;
+using Livraria_Projeto.Database;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging;
-using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddDbContext<DbContextInMemory>(options =>
+    options.UseInMemoryDatabase("BookshopDb"));
 
-builder.Services.AddControllers();
-builder.Services.AddControllers().AddJsonOptions(opt =>
-{
-    opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-    opt.JsonSerializerOptions.WriteIndented = true;
-});
-// Configure logging
-builder.Logging.AddFile("Logs/Livraria-Projeto-{Date}.log");
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddControllers();
+builder.Services.AddSwaggerGen(c =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Version = "v1",
         Title = "Trabalho Final",
-        Description = "API para gerenciamento de produtos, promoções, vendas e logs de estoque",
-        TermsOfService = new Uri("https://example.com/terms"),
+        Version = "v1",
+        Description = "API para gerenciamento de produtos, promoÃ§Ãµes, vendas e logs de estoque",
         Contact = new OpenApiContact
         {
-            Name = "Example Contact",
-            Url = new Uri("https://example.com/contact")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Example License",
-            Url = new Uri("https://example.com/license")
+            Name = "Luiz Carlos Orlandi junior",
         }
     });
-    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
-
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();

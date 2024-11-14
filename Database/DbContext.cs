@@ -1,27 +1,15 @@
-﻿using Livraria_Projeto.Database.Models;
+using Livraria_Projeto.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
 
-namespace Livraria_Projeto.Database
+namespace Livraria_Projeto.Database;
+
+public class DbContextInMemory : DbContext
 {
-
-    public partial class LDbcontext : DbContext
-    {
-        public LDbcontext()
-        {
-
-        }
-
-
-        public LDbcontext(DbContextOptions<LDbcontext> options)
-         : base(options)
-        {
-
-        }
-
-        public virtual DbSet<Products> Livros { get; set; }
-        public virtual DbSet<Gender> Generos { get; set; }
-        public virtual DbSet<Funcionarios> Funcionarios { get; set; }
-    }
+    public DbContextInMemory(DbContextOptions<DbContextInMemory> options) : base(options) { }
+    
+    public DbSet<Book> Books { get; set; }
+    public DbSet<Gender> Genders { get; set; }
+    public DbSet<Movement> Movements { get; set; }
+    public DbSet<Publisher> Publishers { get; set; }
+    
 }
-
