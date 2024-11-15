@@ -8,11 +8,16 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<DbContextInMemory>(options =>
+
+// Configuração do DbContext usando um banco de dados em memória
+builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseInMemoryDatabase("BookshopDb"));
 
+// Adicionando serviços fundamentais pra desenvoler APIs com controladores
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
+
+// Configuração do Swagger para documentação da API
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -22,17 +27,24 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API para gerenciamento de produtos, promoções, vendas e logs de estoque",
         Contact = new OpenApiContact
         {
-            Name = "Luiz Carlos Orlandi junior",
+            Name = "Luiz Carlos Orlandi",
         }
     });
 });
 
 var app = builder.Build();
 
+// Configuração do middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
 app.Run();
